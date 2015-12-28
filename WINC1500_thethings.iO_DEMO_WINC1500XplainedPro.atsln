@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "WINC1500_thethings.iO_DEMO_WINC1500XplainedPro", "WINC1500_thethings.iO_DEMO_WINC1500XplainedPro\WINC1500_thethings.iO_DEMO_WINC1500XplainedPro.cproj", "{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Release|ARM = Release|ARM
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Debug|ARM.ActiveCfg = Debug|ARM
+		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Debug|ARM.Build.0 = Debug|ARM
+		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Release|ARM.ActiveCfg = Release|ARM
+		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Release|ARM.Build.0 = Release|ARM
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
