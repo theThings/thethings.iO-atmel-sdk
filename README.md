@@ -5,9 +5,10 @@ This README is a technical description how to use thethings.iO with the Atmel st
 ## Requirements
 
 * Atmel SAMD21XPLAINED PRO board
+* Atmel WINC 1500
 * Atmel Studio 7.0
 * Atmel Framework 
-* Windows 7 SP1 (You can use a Windows in a virtual machine but the WINC1500 firmware upgrade only Works in a non virtualized Windows machine).
+* Windows 7 SP1 (You can use a Windows in a virtual machine but the WINC1500 firmware upgrade ONLY works in a non virtualized Windows machine)
 * thethings.iO free account
 
 ## How to Start
