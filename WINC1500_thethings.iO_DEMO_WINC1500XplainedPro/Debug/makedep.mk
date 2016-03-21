@@ -114,7 +114,7 @@ src\ASF\thirdparty\fatfs\fatfs-r0.09\src\ff.c
 
 src\ASF\thirdparty\fatfs\fatfs-r0.09\src\option\ccsbcs.c
 
-src\thethingsio_client.c
+src\iot\thethingsio\thethingsio_client.c
 
 src\iot\http\http_client.c
 

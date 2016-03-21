@@ -31,6 +31,7 @@
           <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.components.wifi.winc1500" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.services.basic.sleepmgr" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="common2.components.memory.sd_mmc" value="Add" config="spi" content-id="Atmel.ASF" />
           <option id="sam0.components.sensor.at30tse75x" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.drivers.adc" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.nvm" value="Add" config="" content-id="Atmel.ASF" />
@@ -39,7 +40,7 @@
           <option id="sam0.drivers.tcc" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.utils.stdio.stdio_serial" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.services.fs.fatfs" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common2.components.memory.sd_mmc" value="Add" config="spi" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.sercom.i2c.master" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="common.components.wifi.winc1500.exosite_demo" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.utils" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.utils" value="Add" config="" content-id="Atmel.ASF" />
@@ -994,6 +995,8 @@
     <Folder Include="src\iot\" />
     <Folder Include="src\iot\http\" />
     <Folder Include="src\iot\mqtt" />
+    <Folder Include="src\iot\thethingsio" />
+    <Folder Include="vsix\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\asf.h">
@@ -1228,9 +1231,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\iot\mqtt\libMQTT.a">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\thethingsio_client.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\samd21\include\pio\samd21g15l.h">
@@ -2115,7 +2115,10 @@
     <Compile Include="src\iot\mqtt\mqtt.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\thethingsio_client.c">
+    <Compile Include="src\iot\thethingsio\thethingsio_client.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\iot\thethingsio\thethingsio_client.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\iot\http\http_client.c">
@@ -2136,6 +2139,12 @@
     <Compile Include="src\tick_counter.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="vsix\extension.xdkmanifest">
+      <SubType>Code</SubType>
+    </None>
+    <None Include="vsix\License.txt">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

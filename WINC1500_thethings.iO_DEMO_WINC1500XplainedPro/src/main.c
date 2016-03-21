@@ -45,6 +45,8 @@
  * It uses the following hardware:
  * - the SAMD21 Xplained Pro.
  * - the WINC1500 on EXT1.
+ * The read/write and subscribe functionality added in the example to connect
+ * to thethings.io platform.
  *
  * \section files Main Files
  * - main.c : Initialize the WINC1500 and retrieve information.
@@ -86,11 +88,8 @@
 #include "socket/include/socket.h"
 #include "main.h"
 #include "conf_nvm.h"
-
-
-
 #include "tick_counter.h"
-#include "thethingsio_client.h"
+#include "thethingsio/thethingsio_client.h"
 
 /** state enum value for sequence*/
 typedef enum {
@@ -148,6 +147,22 @@ static void configure_console(void)
 	usart_enable(&cdc_uart_module);
 }
 
+
+
+/**
+ * \brief Configure the gpio pins to activate on/off
+ */
+static void config_led(void)
+{
+	struct port_config pin_conf;
+	port_get_config_defaults(&pin_conf);
+	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(EXT2_PIN_GPIO_0, &pin_conf);
+	port_pin_set_output_level(EXT2_PIN_GPIO_0, false);			
+	port_pin_set_config(EXT2_PIN_GPIO_1, &pin_conf);
+	port_pin_set_output_level(EXT2_PIN_GPIO_1, false);
+}
+
 /**
  * \brief Callback to get the Wi-Fi status update.
  *
@@ -181,6 +196,7 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 			}
 			else if (pstrWifiState->u8CurrState == M2M_WIFI_DISCONNECTED)
 			{
+				
 				DEBUG(DEBUG_CONF_SOCKET"Wi-Fi disconnected"DEBUG_EOL);
 			}
 			break;
@@ -266,6 +282,14 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 	}
 }
 
+
+/**
+ * \brief Callback to get the Response data from the last http post/get call
+ *
+ * \param[in] response_code type of http response code. 
+ * \param[in] response_data is the http response payload 
+ * \param[in] response_lenght the length of the http respone payload
+ */
 static void parsing_http_response_data(int response_code, char * response_data, int response_length)
 {
 	char buf[1024] = {0,};
@@ -278,7 +302,7 @@ static void parsing_http_response_data(int response_code, char * response_data, 
 		{
 			if( response_length > 0)
 			{
-
+				
 
 			}
 		}
@@ -318,6 +342,49 @@ static void parsing_http_response_data(int response_code, char * response_data, 
 		}
 		break;
 	}
+}
+
+
+/**
+ * \brief Callback of the MQTT client. ThethingsIO platform send broadcast the messages which the thing recieve.
+ *
+ * \param[in]  message     The jaon message recieve in the MQTT channel from thethings platform.
+ *
+ */
+static void thethingsio_subscribe_callback(char* message)
+{
+	
+   // this callback change the GPIO pin EXT2 en la extension board
+   // check to callback with 
+   // curl -i -H "Accept: application/json"  -H "Content-Type: application/json"  -d '{"values":[{"key": "green","value": "1"}]}' -X POST "http://api.thethings.io/v2/things/{THINGTOKEN}" -k 	
+   
+   printf("%s", message);
+   char strongreen[35];
+   char stroffgreen[35];
+
+   int ret;
+  // port_pin_toggle_output_level(EXT2_PIN_GPIO_0);
+   strcpy(stroffgreen, "[{\"key\":\"green\",\"value\":\"0\"}]\034");
+   strcpy(strongreen, "[{\"key\":\"green\",\"value\":\"1\"}]\034");     
+   ret = strncmp(stroffgreen, message, strnlen(message, 150));
+   if (ret == 0)
+   {
+	    printf("green off \n\r");
+		port_pin_set_output_level(EXT2_PIN_GPIO_0, false);
+		return;
+		
+   }
+   ret = strncmp(strongreen, message, strnlen(message, 150));
+   if (ret == 0)
+   {
+	    printf("green on \n\r");
+		port_pin_set_output_level(EXT2_PIN_GPIO_0, true);
+		return;	
+	}
+ 
+
+
+	
 }
 
 /**
@@ -366,7 +433,10 @@ int main(void)
 	system_init();
 
 	/* setting sleep mode. */
-	system_set_sleepmode(SYSTEM_SLEEPMODE_STANDBY);
+	system_set_sleepmode(SYSTEM_SLEEPMODE_IDLE_0);
+	
+	/* Initialize the LED */
+	config_led();
 	
 	/* Initialize the UART console. */
 	configure_console();
@@ -379,7 +449,7 @@ int main(void)
 	configure_nvm();
 	
 	/* Configure the MQTT subscribe broker */
-	thethingsio_subscribe_config();
+	thethingsio_subscribe_config(thethingsio_subscribe_callback);
 	
 	/* Initialize TheThings.iO */
 	thethingsio_example_http_init(main_http_client_callback);
@@ -407,28 +477,17 @@ int main(void)
 	}
 		
 	m2m_wifi_set_sleep_mode(MAIN_PS_SLEEP_MODE, 1);
-	
-	
-	
-	
+		
 	/* Initialize socket. */
 	socketInit();
-	// registerSocketCallback(http_client_socket_event_handler, http_client_socket_resolve_handler);
 	
-	registerSocketCallback(mqtt_socket_event_handler, mqtt_socket_resolve_handler);
-
+	// We have 2 Callbacks one for the MQTT subsystem and another for the HTTP request.
+	//registerSocketCallback(socket_cb, resolve_cb);
+	registerSocketCallbackMQTT(mqtt_socket_event_handler, mqtt_socket_resolve_handler);
+	registerSocketCallback(http_client_socket_event_handler, http_client_socket_resolve_handler);
 	
-	
-	// configure the mqtt infraestructure
-	
-	
-	
-	/* Connect using stored SSID and Password. */
-	
-	
-	
-	// m2m_wifi_default_connect();	
-	
+	// WIFI Connection
+	 // m2m_wifi_default_connect();	
 	m2m_wifi_connect((char *)MAIN_WLAN_DEVICE_NAME, strlen((char *)MAIN_WLAN_DEVICE_NAME), M2M_WIFI_SEC_WPA_PSK, (char *)MAIN_WLAN_PSK, M2M_WIFI_CH_ALL);
 	
 	printf("Connecting to %s.\r\n", (char *)MAIN_WLAN_DEVICE_NAME);
@@ -484,6 +543,7 @@ int main(void)
 				
 			dTemp = (int) at30tse_read_temperature();		
 			sprintf(send_buf,MAIN_THETHINGSIO_JSON_START MAIN_THETHINGSIO_JSON_KEY_VALUE_SI MAIN_THETHINGSIO_JSON_END, "temperature", (int)dTemp);
+			
 			
 			// send temperature value
 			thethingsio_example_read_and_write(send_buf);	

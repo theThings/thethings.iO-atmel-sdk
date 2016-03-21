@@ -47,21 +47,17 @@ extern "C" {
 
 
 // use this only during development, to avoid that new thing token is requested all the time
-#define DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
-//#define DEBUG_THING_TOKEN							"A9hkXyJ_alXvvW8rjSao3Y3esnP2__AvQbSnEBnSRik"  // JOSEF Thing token
+//#define DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
+///** This define the user and password for connect to the wifi infraestructure
+
+
 #define DEBUG_THING_TOKEN							"XJgU-PTj5k9VRvl_5I3O8mIkFNSYBpk7JMWRpQrNwQE"
 
 // this activation code once requests a thing token. This thing token will then be stored in non volatile memory
-#define MAIN_THETHINGSIO_ACTIVATION_CODE			"1wg1AcuFPUn9n8f2J9tBE0MJi1vvLVusYg"
+// IMPORTANT !!!!!! you should modify the following line with your own activation code.
+#define MAIN_THETHINGSIO_ACTIVATION_CODE			"PUT YOUR ACTIVATION CODE"
 
-// format to send values to thethings.io
-#define MAIN_THETHINGSIO_JSON_START					"{\"values\":[{"
-#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SS			"\"key\":\"%s\",\"value\":\"%s\""
-#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SI			"\"key\":\"%s\",\"value\":\"%d\""
-//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SS	"\"%s\":\"%s\""						// minimum amount of characters for string-key and  string-value, returns error from thethings!!
-//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SI	"\"%s\":%d"							// minimum amount of characters for string-key and integer-value, returns error from thethings!!
-#define MAIN_THETHINGSIO_JSON_SEPARATOR				","
-#define MAIN_THETHINGSIO_JSON_END					"}]}"
+
 
 #define MAIN_RES_HTTP_CODE_200						200			// "get" (request resource)
 #define MAIN_RES_HTTP_CODE_201						201			// activate thing, "post" (create resource)
@@ -70,35 +66,20 @@ extern "C" {
 
 
 // power mode
+// The M2M_NO_PS mode don't switch off the WIFI 
 #define MAIN_PS_SLEEP_MODE  M2M_NO_PS
 
 #define HEX2ASCII(x) (((x) >= 10) ? (((x) - 10) + 'A') : ((x) + '0'))
 
-//#define MAIN_M2M_AP_SEC							M2M_WIFI_SEC_WPA_PSK
-//#define MAIN_M2M_AP_WEP_KEY						"WayraBarcelona"
-//#define MAIN_M2M_AP_SSID_MODE					SSID_MODE_VISIBLE
-// #define MAIN_M2M_DHCP_SERVER_IP					{192, 168, 1, 1}
-	
-	
-/** security information for Wi-Fi connection */
-//#define MAIN_WLAN_DEVICE_NAME           "WayraBCN" /**< Destination SSID */
-//#define MAIN_WLAN_PSK					"WayraBarcelona"
 
-//#define MAIN_WLAN_DEVICE_NAME           "mibamuseum2" /**< Destination SSID */
-//#define MAIN_WLAN_PSK					"ciutatset1234"
+// This define the user and password for connect to the wifi infraestructure / Changue for your own
+// this is the GUEST thethings io network if you will be in our office you can use it ;)
+#define MAIN_WLAN_DEVICE_NAME			"thethings.iO - GUEST"
+#define MAIN_WLAN_PSK					"ilovethethingsioguests"
 
-#define MAIN_WLAN_DEVICE_NAME			"c6138a"
-#define MAIN_WLAN_PSK					"271168418"
 
 
 #define MAIN_WLAN_WEP_KEY_INDEX         1 /**< WEP key index */
-
-// MQTT definitions
-
-/* Max size of MQTT buffer. */
-#define MAIN_MQTT_BUFFER_SIZE 128
-
-#define MQTT_PORT 1883
 
 #define MAIN_HTTP_PROV_SERVER_DOMAIN_NAME		"atmelconfig.com"
 

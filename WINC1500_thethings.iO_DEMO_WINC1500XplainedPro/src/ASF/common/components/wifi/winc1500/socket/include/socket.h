@@ -819,6 +819,7 @@ NMI_API void socketDeinit(void);
 */
 
 NMI_API void registerSocketCallback(tpfAppSocketCb socket_cb, tpfAppResolveCb resolve_cb);
+NMI_API void registerSocketCallbackMQTT(tpfAppSocketCb socket_cb, tpfAppResolveCb resolve_cb);
 /** @} */
 
 /** @defgroup SocketFn socket

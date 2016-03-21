@@ -111,6 +111,10 @@ volatile uint16					gu16SessionID = 0;
 
 volatile tpfAppSocketCb		    gpfAppSocketCb;
 volatile tpfAppResolveCb		gpfAppResolveCb;
+
+volatile tpfAppSocketCb		    gpfAppSocketCbMQTT;
+volatile tpfAppResolveCb		gpfAppResolveCbMQTT;
+
 volatile uint8					gbSocketInit = 0;
 volatile tpfPingCb				gfpPingCb;
 /*********************************************************************
@@ -162,6 +166,9 @@ NMI_API void Socket_ReadSocketData(SOCKET sock, tstrSocketRecvMsg *pstrRecv,uint
 
 				if (gpfAppSocketCb)
 					gpfAppSocketCb(sock,u8SocketMsg, pstrRecv);
+					
+				if (gpfAppSocketCbMQTT)
+					gpfAppSocketCbMQTT(sock, u8SocketMsg, pstrRecv);
 
 				u16ReadCount -= u16Read;
 				u32Address += u16Read;
@@ -206,6 +213,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			strBind.status = strBindReply.s8Status;
 			if(gpfAppSocketCb)
 				gpfAppSocketCb(strBindReply.sock,SOCKET_MSG_BIND,&strBind);
+			if (gpfAppSocketCbMQTT)
+			   gpfAppSocketCbMQTT(strBindReply.sock,SOCKET_MSG_BIND,&strBind);
 		}
 	}
 	else if(u8OpCode == SOCKET_CMD_LISTEN)
@@ -217,6 +226,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			strListen.status = strListenReply.s8Status;
 			if(gpfAppSocketCb)
 				gpfAppSocketCb(strListenReply.sock,SOCKET_MSG_LISTEN, &strListen);
+			if (gpfAppSocketCbMQTT)
+			    gpfAppSocketCbMQTT(strListenReply.sock,SOCKET_MSG_BIND,&strListen);
 		}
 	}
 	else if(u8OpCode == SOCKET_CMD_ACCEPT)
@@ -245,6 +256,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			strAccept.strAddr.sin_addr.s_addr = strAcceptReply.strAddr.u32IPAddr;
 			if(gpfAppSocketCb)
 				gpfAppSocketCb(strAcceptReply.sListenSock, SOCKET_MSG_ACCEPT, &strAccept);
+			if(gpfAppSocketCbMQTT)
+				gpfAppSocketCbMQTT(strAcceptReply.sListenSock, SOCKET_MSG_ACCEPT, &strAccept);
 		}
 	}
 	else if((u8OpCode == SOCKET_CMD_CONNECT) || (u8OpCode == SOCKET_CMD_SSL_CONNECT))
@@ -257,6 +270,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			strConnMsg.s8Error	= strConnectReply.s8Error;
 			if(gpfAppSocketCb)
 				gpfAppSocketCb(strConnectReply.sock,SOCKET_MSG_CONNECT, &strConnMsg);
+			if(gpfAppSocketCbMQTT)
+				gpfAppSocketCbMQTT(strConnectReply.sock,SOCKET_MSG_CONNECT, &strConnMsg);
 		}
 	}
 	else if(u8OpCode == SOCKET_CMD_DNS_RESOLVE)
@@ -267,6 +282,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			strDnsReply.u32HostIP = strDnsReply.u32HostIP;
 			if(gpfAppResolveCb)
 				gpfAppResolveCb((uint8*)strDnsReply.acHostName, strDnsReply.u32HostIP);
+			if(gpfAppResolveCbMQTT)
+				gpfAppResolveCbMQTT((uint8*)strDnsReply.acHostName, strDnsReply.u32HostIP);
 		}
 	}
 	else if((u8OpCode == SOCKET_CMD_RECV) || (u8OpCode == SOCKET_CMD_RECVFROM) || (u8OpCode == SOCKET_CMD_SSL_RECV))
@@ -323,6 +340,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 					strRecvMsg.pu8Buffer		= NULL;
 					if(gpfAppSocketCb)
 						gpfAppSocketCb(sock,u8CallbackMsgID, &strRecvMsg);
+					if(gpfAppSocketCbMQTT)
+						gpfAppSocketCbMQTT(sock,u8CallbackMsgID, &strRecvMsg);
 				}
 			}
 			else
@@ -357,6 +376,8 @@ static void m2m_ip_cb(uint8 u8OpCode, uint16 u16BufferSize,uint32 u32Address)
 			{
 				if(gpfAppSocketCb)
 					gpfAppSocketCb(sock,u8CallbackMsgID, &s16Rcvd);
+				if(gpfAppSocketCbMQTT)
+					gpfAppSocketCbMQTT(sock,u8CallbackMsgID, &s16Rcvd);
 			}
 			else
 			{
@@ -430,6 +451,8 @@ void socketDeinit(void)
 	hif_register_cb(M2M_REQ_GRP_IP, NULL);
 	gpfAppSocketCb = NULL;
 	gpfAppResolveCb = NULL;
+	gpfAppResolveCbMQTT = NULL;
+	gpfAppResolveCbMQTT = NULL;
 	gbSocketInit = 0;
 }
 
@@ -456,6 +479,13 @@ void registerSocketCallback(tpfAppSocketCb pfAppSocketCb, tpfAppResolveCb pfAppR
 {
 	gpfAppSocketCb = pfAppSocketCb;
 	gpfAppResolveCb = pfAppResolveCb;
+}
+
+
+void registerSocketCallbackMQTT(tpfAppSocketCb pfAppSocketCb, tpfAppResolveCb pfAppResolveCb)
+{
+	gpfAppSocketCbMQTT = pfAppSocketCb;
+	gpfAppResolveCbMQTT = pfAppResolveCb;
 }
 
 /*********************************************************************

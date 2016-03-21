@@ -176,8 +176,8 @@ src/main.d src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/common/components/wifi/winc1500/socket/include/socket.h \
  ../src/main.h ../src/config/conf_nvm.h ../src/tick_counter.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\ctype.h \
- ../src/thethingsio_client.h ../src/iot/http/http_client.h \
- ../src/iot/sw_timer.h \
+ ../src/iot/thethingsio/thethingsio_client.h \
+ ../src/iot/http/http_client.h ../src/iot/sw_timer.h \
  ../src/ASF/common/components/wifi/winc1500/exosite_demo/samd21g18a_samw25_xplained_pro/conf_sw_timer.h \
  ../src/asf.h ../src/iot/http/http_entity.h ../src/iot/mqtt/mqtt.h
 
@@ -555,7 +555,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\ctype.h:
 
-../src/thethingsio_client.h:
+../src/iot/thethingsio/thethingsio_client.h:
 
 ../src/iot/http/http_client.h:
 
