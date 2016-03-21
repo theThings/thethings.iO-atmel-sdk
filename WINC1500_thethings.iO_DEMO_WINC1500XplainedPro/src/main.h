@@ -46,23 +46,11 @@ extern "C" {
 #endif
 
 
-// use this only during development, to avoid that new thing token is requested all the time
-//#define DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
-///** This define the user and password for connect to the wifi infraestructure
-
-
-#define DEBUG_THING_TOKEN							"XJgU-PTj5k9VRvl_5I3O8mIkFNSYBpk7JMWRpQrNwQE"
-
-// this activation code once requests a thing token. This thing token will then be stored in non volatile memory
-// IMPORTANT !!!!!! you should modify the following line with your own activation code.
-#define MAIN_THETHINGSIO_ACTIVATION_CODE			"PUT YOUR ACTIVATION CODE"
 
 
 
-#define MAIN_RES_HTTP_CODE_200						200			// "get" (request resource)
-#define MAIN_RES_HTTP_CODE_201						201			// activate thing, "post" (create resource)
-#define MAIN_RES_HTTP_CODE_400						400			// bad request
-#define MAIN_RES_HTTP_CODE_500						500			// internal error
+
+
 
 
 // power mode
@@ -104,7 +92,7 @@ static CONST char gacHttpProvDomainName[] = MAIN_HTTP_PROV_SERVER_DOMAIN_NAME;
 static uint8_t gau8MacAddr[] = MAIN_MAC_ADDRESS;
 static int8_t gacDeviceName[] = MAIN_M2M_DEVICE_NAME;
 
-static uint8_t gau8TheThingsIoThingToken[] = DEBUG_THING_TOKEN;
+
 
 #ifdef __cplusplus
 }

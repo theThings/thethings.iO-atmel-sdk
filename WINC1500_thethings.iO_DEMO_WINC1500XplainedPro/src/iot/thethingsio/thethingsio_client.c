@@ -43,6 +43,17 @@
 #include "tick_counter.h"
 
 
+// use this only during development, to avoid that new thing token is requested all the time
+//#define DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
+///** This define the user and password for connect to the wifi infraestructure
+
+
+#define DEBUG_THING_TOKEN							"PUT YOUR THING TOKEN"
+
+// this activation code once requests a thing token. This thing token will then be stored in non volatile memory
+// IMPORTANT !!!!!! you should modify the following line with your own activation code.
+#define MAIN_THETHINGSIO_ACTIVATION_CODE			"PUT YOUR ACTIVATION CODE"
+
 #define THETHINGSIO_EXAMPLE_ACTIVATION_CODE_LENGTH		34
 #define THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH			43
 
@@ -58,6 +69,15 @@
 #define THETHINGSIO_EXAMPLE_HTTP_SUBSCRIBE			"v2/things/" THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN
 #define MQTT_SUBCRIBE_TOPIC_NEW  "/v2/things" THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN
 
+// HTTP CODES
+#define MAIN_RES_HTTP_CODE_200						200			// "get" (request resource)
+#define MAIN_RES_HTTP_CODE_201						201			// activate thing, "post" (create resource)
+#define MAIN_RES_HTTP_CODE_400						400			// bad request
+#define MAIN_RES_HTTP_CODE_500						500			// internal error
+
+
+/* flag to be set when thing token was configured correctly */
+static uint8_t gThingTokenConfiguredCorrectlyFlag = 0x00;
 
 /** NVM Addresses */
 //Current 1000, but Max is ((1023) * NVMCTRL_ROW_PAGES * NVMCTRL_PAGE_SIZE); taken from Parse example; NVMCTRL_PAGES is 1024, is total  number of pages
@@ -120,6 +140,8 @@ static struct mqtt_module mqtt_inst;
 static char mqtt_buffer[MAIN_MQTT_BUFFER_SIZE];
 
 static thethingsio_subscribe_cb  subscribe_cb;
+
+static uint8_t gau8TheThingsIoThingToken[] = DEBUG_THING_TOKEN;
 
 /************************************************************************/
 /* declare inner function                                               */
@@ -237,6 +259,49 @@ uint8_t thethingsio_create_mqtt_subscribe_broker(char *thing_token)
 }
 
 
+void  thethingsio_set_thingtoken_state(int state)
+{
+	gThingTokenConfiguredCorrectlyFlag = state;
+	
+}
+
+int  thethingsio_get_thingtoken_state()
+{
+	
+	return gThingTokenConfiguredCorrectlyFlag;
+}
+
+bool thethingsio_activate_thing()
+{
+	char * activation_code = MAIN_THETHINGSIO_ACTIVATION_CODE;
+	bool ret = false;
+	int err_code = 0;
+	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_activiate"DEBUG_EOL);
+	
+	sprintf(gau8TheThingsiOActivationData,THETHINGSIO_EXAMPLE_JSON_ACTIVATE,activation_code);
+	
+	struct http_entity * entity = _thethingsio_example_http_set_default_entity();
+	entity->priv_data = (void*)gau8TheThingsiOActivationData;
+	
+	err_code = http_client_send_request(&http_client_module_inst, THETHINGSIO_EXAMPLE_HTTP_ACTIVATE_URL,HTTP_METHOD_POST,entity, NULL);
+	if( err_code == 0)
+	{
+		ret = true;
+		tick_counter_pending_timer();
+	}
+	else
+	{
+		DEBUG(DEBUG_CONF_THETHINGSIO"Error : thethingsio_example_activiate code %d"DEBUG_EOL, err_code);
+	}
+	
+	return ret;
+	
+}
+
+
+/**
+Send a Activate call to get thethings token from the activation code.
+*/
 bool thethingsio_example_activate_thing(char * activation_code)
 {
 	bool ret = false;
@@ -557,4 +622,65 @@ bool thethingsio_disconnect_subscribe()
 
 void _thethingsio_example_http_close(void *priv_data)
 {
+}
+
+/**
+ * \brief Callback to get the Response data from the last http post/get call
+ *
+ * \param[in] response_code type of http response code. 
+ * \param[in] response_data is the http response payload 
+ * \param[in] response_lenght the length of the http respone payload
+ */
+void thethingsio_parsing_http_response_data(int response_code, char * response_data, int response_length)
+{
+	char buf[1024] = {0,};
+	char *value_data_point = NULL;
+	memcpy(buf, response_data,sizeof(char)*response_length);
+	
+	switch(response_code)
+	{
+		case MAIN_RES_HTTP_CODE_200:			// commands with 200 response code: "get" (request resource)
+		{
+			if( response_length > 0)
+			{
+				
+
+			}
+		}
+		break;
+		case MAIN_RES_HTTP_CODE_201:			// commands with 201 response code: activate thing, "post" (create resource)
+		{
+			if( response_length > 0)
+			{
+				// later version: read server response and decide what to do based on response
+				
+				/* check if this answer comes due to device activation by analyzing the response, then flag can be kicked here */
+				if (gThingTokenConfiguredCorrectlyFlag == 0x01) 
+				{
+					// if so, extract token and use it
+					// insert JSON read here
+					strcpy(gau8TheThingsIoThingToken, DEBUG_THING_TOKEN);
+					
+					//pass token to function within thingsio module
+					thethingsio_example_write_thing_token_nvm(gau8TheThingsIoThingToken);
+					printf("thing token written to nvm successfully \n\r");
+					
+					gThingTokenConfiguredCorrectlyFlag = 0x02;
+				}
+			}
+		}		
+		
+	
+		break;
+		case MAIN_RES_HTTP_CODE_400:
+		{
+
+		}
+		break;
+		case MAIN_RES_HTTP_CODE_500:
+		{
+
+		}
+		break;
+	}
 }

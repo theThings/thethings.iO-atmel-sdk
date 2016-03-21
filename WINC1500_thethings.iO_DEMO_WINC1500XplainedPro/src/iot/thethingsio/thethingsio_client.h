@@ -99,141 +99,35 @@ bool	thethingsio_example_activate_thing(char * activation_code);
 bool	thethingsio_example_read_and_write(char * write_data);
 
 /*
-*	\brief Subscribe to the MQTT queue of the server.
+*    @typedef \
+*         thethingsio_subscribe_cb callback
+*
+*	@brief Subscribe to the MQTT queue of the server.
 *
 *
-*	\return	true the subscription was done.
+*   @param [in]	message  the json message from thethings.io platform.
+*
+*
+*	@return	true the subscription was done.
 */
-
-
-
-/* @typedef \
-	tpfAppWifiCb
-
-@brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
-
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
-
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
-
-@param [in]	pvMsg
-				A pointer to a buffer containing the notification parameters (if any). It should be
-				Casted to the correct data type corresponding to the notification type.
-
-@see
-	tstrM2mWifiStateChanged
-	tstrM2MWPSInfo
-	tstrM2mScanDone
-	tstrM2mWifiscanResult
-*/
-
 typedef void (*thethingsio_subscribe_cb) (char* message);
 
-/* @typedef \
-	tpfAppWifiCb
 
-@brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
-
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
-
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
-
-@param [in]	pvMsg
-				A pointer to a buffer containing the notification parameters (if any). It should be
-				Casted to the correct data type corresponding to the notification type.
-
-@see
-	tstrM2mWifiStateChanged
-	tstrM2MWPSInfo
-	tstrM2mScanDone
-	tstrM2mWifiscanResult
+/*
+*    @typedef \
+*         tpfTheThingsIOReadcallback callback
+*
+*	@brief callback from the RESST io api
+*
+*
+*   @param [in]	message  the json message from thethings.io platform.
+*
+*
+*	@return	true the subscription was done.
 */
-
 typedef void (*tpfTheThingsIOReadcallback) (char* message, char* data);
 
 
-/* @typedef \
-	tpfAppWifiCb
-
-@brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
-
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
-
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
-
-@param [in]	pvMsg
-				A pointer to a buffer containing the notification parameters (if any). It should be
-				Casted to the correct data type corresponding to the notification type.
-
-@see
-	tstrM2mWifiStateChanged
-	tstrM2MWPSInfo
-	tstrM2mScanDone
-	tstrM2mWifiscanResult
-*/
 typedef void (*tpfTheThingsIOWritecallback) (uint8_t uiMessage);
 
 
@@ -241,44 +135,13 @@ typedef void (*tpfTheThingsIOWritecallback) (uint8_t uiMessage);
 /* @typedef \
 	tpfAppWifiCb
 
-@brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
+@brief		configure the subscription callback for the MQTT broker.
 
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
 
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
 
-@param [in]	pvMsg
-				A pointer to a buffer containing the notification parameters (if any). It should be
-				Casted to the correct data type corresponding to the notification type.
+activate the MQTT system.
 
-@see
-	tstrM2mWifiStateChanged
-	tstrM2MWPSInfo
-	tstrM2mScanDone
-	tstrM2mWifiscanResult
 */
-//bool thethingsio_subscribe_config();
 
 bool thethingsio_subscribe_config(thethingsio_subscribe_cb cb);
 
@@ -287,35 +150,7 @@ bool thethingsio_subscribe_config(thethingsio_subscribe_cb cb);
 	tpfAppWifiCb
 
 @brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
-
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
-
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
-
-@param [in]	pvMsg
-				A pointer to a buffer containing the notification parameters (if any). It should be
-				Casted to the correct data type corresponding to the notification type.
+			
 
 @see
 	tstrM2mWifiStateChanged
@@ -332,31 +167,7 @@ bool thethingsio_connect_subscribe();
 	tpfAppWifiCb
 
 @brief
-				Wi-Fi's main callback function handler, for handling the M2M_WIFI events received on the Wi-Fi interface.
-			       Such notifications are received in response to Wi-Fi/P2P operations such as @ref m2m_wifi_request_scan,
-				@ref m2m_wifi_connect.
-				Wi-Fi/P2P operations are implemented in an asynchronous mode, and all incoming information/status
-				are to be handled through this callback function when the corresponding notification is received.
-				Applications are expected to assign this wi-fi callback function by calling @ref m2m_wifi_init
-@param [in]	u8MsgType
-				Type of notification. Possible types are:
-				/ref M2M_WIFI_RESP_CON_STATE_CHANGED
-				/ref M2M_WIFI_RESP_CONN_INFO
-				/ref M2M_WIFI_REQ_DHCP_CONF
-				/ref M2M_WIFI_REQ_WPS
-				/ref M2M_WIFI_RESP_IP_CONFLICT
-				/ref M2M_WIFI_RESP_SCAN_DONE
-				/ref M2M_WIFI_RESP_SCAN_RESULT
-				/ref M2M_WIFI_RESP_CURRENT_RSSI
-				/ref M2M_WIFI_RESP_CLIENT_INFO
-				/ref M2M_WIFI_RESP_PROVISION_INFO
-				/ref M2M_WIFI_RESP_DEFAULT_CONNECT
-
-			In case Bypass mode is defined :
-				@ref M2M_WIFI_RESP_ETHERNET_RX_PACKET
-
-			In case Monitoring mode is used:
-				@ref M2M_WIFI_RESP_WIFI_RX_PACKET
+				
 
 @param [in]	pvMsg
 				A pointer to a buffer containing the notification parameters (if any). It should be
@@ -370,22 +181,53 @@ bool thethingsio_connect_subscribe();
 */
 bool thethingsio_refresh_subscribe();
 
+/* @typedef \
+	tpfAppWifiCb
+
+@brief
+				
+
+@param [in]	pvMsg
+				A pointer to a buffer containing the notification parameters (if any). It should be
+				Casted to the correct data type corresponding to the notification type.
+
+@see
+	tstrM2mWifiStateChanged
+	tstrM2MWPSInfo
+	tstrM2mScanDone
+	tstrM2mWifiscanResult
+*/
+
 bool thethingsio_disconnect_subscribe();
 
+
+/* @typedef \
+	tpfAppWifiCb
+
+@brief
+				
+
+@param [in]	pvMsg
+				A pointer to a buffer containing the notification parameters (if any). It should be
+				Casted to the correct data type corresponding to the notification type.
+
+@see
+	tstrM2mWifiStateChanged
+	tstrM2MWPSInfo
+	tstrM2mScanDone
+	tstrM2mWifiscanResult
+*/
 bool thethingsio_example_subscribe(char* topic);
 
 
-struct client_thethingsio_module {
-	
-	/** A flag for the socket is sending. */
-	uint8_t subscribe_status :  1;
-	/** A flag that whether using the persistent connection or not. */
-	uint8_t http_Status   : 1;
+bool thethingsio_activate_thing();
 
-	//thethingsio_http_cb http_cb;
-	
-	thethingsio_subscribe_cb subscribe_cb;
-};
+void thethingsio_set_thingtoken_state(int state);
+
+int thethingsio_get_thingtoken_state();
+
+void thethingsio_parsing_http_response_data(int response_code, char * response_data, int response_length);
+
 
 #ifdef __cplusplus
 }

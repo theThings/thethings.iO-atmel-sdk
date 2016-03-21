@@ -106,8 +106,7 @@ static wifi_connect_state ap_wifi_connection_state = MAIN_NEED_TO_CHECK_AP_INFOR
 /** UART module for debug. */
 static struct usart_module cdc_uart_module;
 
-/* flag to be set when thing token was configured correctly */
-static uint8_t gThingTokenConfiguredCorrectlyFlag = 0x00;
+
 
 
 
@@ -216,21 +215,22 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 #ifdef DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
 			thethingsio_example_write_thing_token_nvm(DEBUG_THING_TOKEN);
 			thethingsio_example_load_thing_token_nvm();
-			printf("debug thing token wrote to nvm and loaded from it successfully \n\r");								
+			printf("debug thing token wrote to nvm and loaded from it successfully \n\r");
+			thethingsio_set_thingtoken_state(0x02);						
 			gThingTokenConfiguredCorrectlyFlag = 0x02;
 #else
 			// configure thing token 
 			if( thethingsio_example_thing_token_available_nvm() )
 			{
-				gThingTokenConfiguredCorrectlyFlag = 0x02;
+				thethingsio_set_thingtoken_state(0x02);
 				thethingsio_example_load_thing_token_nvm();
 				printf("thing token loaded from nvm successfully \n\r");
 			}
 			else
 			{
 				// request thing token sending auth code
-				gThingTokenConfiguredCorrectlyFlag = 0x01;
-				thethingsio_example_activate_thing(MAIN_THETHINGSIO_ACTIVATION_CODE);
+				thethingsio_set_thingtoken_state(0x01);
+				thethingsio_activate_thing();
 				printf("thing token request sent with activation code\n\r");
 			}
 			
@@ -283,66 +283,6 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 }
 
 
-/**
- * \brief Callback to get the Response data from the last http post/get call
- *
- * \param[in] response_code type of http response code. 
- * \param[in] response_data is the http response payload 
- * \param[in] response_lenght the length of the http respone payload
- */
-static void parsing_http_response_data(int response_code, char * response_data, int response_length)
-{
-	char buf[1024] = {0,};
-	char *value_data_point = NULL;
-	memcpy(buf, response_data,sizeof(char)*response_length);
-	
-	switch(response_code)
-	{
-		case MAIN_RES_HTTP_CODE_200:			// commands with 200 response code: "get" (request resource)
-		{
-			if( response_length > 0)
-			{
-				
-
-			}
-		}
-		break;
-		case MAIN_RES_HTTP_CODE_201:			// commands with 201 response code: activate thing, "post" (create resource)
-		{
-			if( response_length > 0)
-			{
-				// later version: read server response and decide what to do based on response
-				
-				/* check if this answer comes due to device activation by analyzing the response, then flag can be kicked here */
-				if (gThingTokenConfiguredCorrectlyFlag == 0x01) 
-				{
-					// if so, extract token and use it
-					// insert JSON read here
-					strcpy(gau8TheThingsIoThingToken, DEBUG_THING_TOKEN);
-					
-					//pass token to function within thingsio module
-					thethingsio_example_write_thing_token_nvm(gau8TheThingsIoThingToken);
-					printf("thing token written to nvm successfully \n\r");
-					
-					gThingTokenConfiguredCorrectlyFlag = 0x02;
-				}
-			}
-		}		
-		
-	
-		break;
-		case MAIN_RES_HTTP_CODE_400:
-		{
-
-		}
-		break;
-		case MAIN_RES_HTTP_CODE_500:
-		{
-
-		}
-		break;
-	}
-}
 
 
 /**
@@ -357,7 +297,6 @@ static void thethingsio_subscribe_callback(char* message)
    // this callback change the GPIO pin EXT2 en la extension board
    // check to callback with 
    // curl -i -H "Accept: application/json"  -H "Content-Type: application/json"  -d '{"values":[{"key": "green","value": "1"}]}' -X POST "http://api.thethings.io/v2/things/{THINGTOKEN}" -k 	
-   
    printf("%s", message);
    char strongreen[35];
    char stroffgreen[35];
@@ -381,10 +320,6 @@ static void thethingsio_subscribe_callback(char* message)
 		port_pin_set_output_level(EXT2_PIN_GPIO_0, true);
 		return;	
 	}
- 
-
-
-	
 }
 
 /**
@@ -407,7 +342,7 @@ static void main_http_client_callback(struct http_client_module *module_inst, in
 
 	case HTTP_CLIENT_CALLBACK_RECV_RESPONSE:
 		tick_counter_reset_timer(TICK_COUNTER_INTERVAL);
-		parsing_http_response_data(data->recv_response.response_code, data->recv_response.content, data->recv_response.content_length);
+		thethingsio_parsing_http_response_data(data->recv_response.response_code, data->recv_response.content, data->recv_response.content_length);
 		break;
 
 	case HTTP_CLIENT_CALLBACK_DISCONNECTED:
@@ -536,7 +471,7 @@ int main(void)
 		} 
 				
 		/* do things if thing token has been configured correctly */
-		if( tick_counter_check_timer() && gThingTokenConfiguredCorrectlyFlag == 0x02 )
+		if( tick_counter_check_timer() && thethingsio_get_thingtoken_state() == 0x02 )
 		{	
 			char send_buf[100] = {0,};
 			int dTemp = 0;
