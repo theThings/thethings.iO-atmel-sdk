@@ -74,6 +74,10 @@ The example code sends in a interval the temperature register by the temperature
 		}
 ```
 
+In the panel a similar graph is created with the values of the temperature sensor.
+
+![Temperature the things io panel graph](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/temperature_panel.jpg)
+
 ### How to Start
 
 First task, you should upgrade the Atmel WiFi firmware. 
