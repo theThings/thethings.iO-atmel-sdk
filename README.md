@@ -21,7 +21,8 @@ The project implements the following features:
 * A protoboard, cable connectors and a led to check the demo app.
 
 This is the picture of the test project
-![Alt text](/relative/path/to/img.jpg?raw=true "Picture Test")
+![Test project](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/samd21Xplained_winc1500.jpg)
+
 
 ## Code Example
 
