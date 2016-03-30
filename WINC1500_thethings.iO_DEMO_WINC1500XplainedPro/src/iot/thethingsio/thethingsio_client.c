@@ -47,28 +47,25 @@
 // use this only during development, to avoid that new thing token is requested all the time
 //#define DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
 ///** This define the user and password for connect to the wifi infraestructure
-
-
-
-#define THETHINGSIO_EXAMPLE_ACTIVATION_CODE_LENGTH		34
-#define THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH			43
+#define THETHINGSIO_ACTIVATION_CODE_LENGTH		34
+#define THETHINGSIO_THING_TOKEN_LENGTH			43
 
 // format to activate thing
-#define THETHINGSIO_EXAMPLE_JSON_ACTIVATE			"{\"activationCode\":\"%s\"}"
+#define THETHINGSIO_JSON_ACTIVATE			"{\"activationCode\":\"%s\"}"
 #define THETHINGSIO_CALLBACK_THINGTOKEN			    "thingToken"	
 #define THETHINGSIO_CALLBACK_STATUS					"status"	
 #define THETHINGSIO_CALLBACK_ERROR_MSJ				"message"
 #define THETHINGSIO_CALLBACK_ERROR					"code"
 
 	
-#define THETHINGSIO_EXAMPLE_DUMMY_ACTIVATION_CODE	"0000000000000000000000000000000000"
-#define THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN		"0000000000000000000000000000000000000000000"
-#define THETHINGSIO_EXAMPLE_HTTP_CONTENT_TYPE		"application/json"
+#define THETHINGSIO_DUMMY_ACTIVATION_CODE	"0000000000000000000000000000000000"
+#define THETHINGSIO_DUMMY_THING_TOKEN		"0000000000000000000000000000000000000000000"
+#define THETHINGSIO_HTTP_CONTENT_TYPE		"application/json"
 #define KEEP_ALIVE_VALUE   "?keepAlive=60000"
-#define THETHINGSIO_EXAMPLE_HTTP_ACTIVATE_URL		"http://api.thethings.io/v2/things"
-#define THETHINGSIO_EXAMPLE_HTTP_READ_AND_WRITE_URL "http://api.thethings.io/v2/things/" THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN
-#define THETHINGSIO_EXAMPLE_HTTP_SUBSCRIBE			"v2/things/" THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN
-#define MQTT_SUBCRIBE_TOPIC_NEW  "/v2/things" THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN
+#define THETHINGSIO_HTTP_ACTIVATE_URL		"http://api.thethings.io/v2/things"
+#define THETHINGSIO_HTTP_READ_AND_WRITE_URL "http://api.thethings.io/v2/things/" THETHINGSIO_DUMMY_THING_TOKEN
+#define THETHINGSIO_HTTP_SUBSCRIBE			"v2/things/" THETHINGSIO_DUMMY_THING_TOKEN
+#define MQTT_SUBCRIBE_TOPIC_NEW  "/v2/things" THETHINGSIO_DUMMY_THING_TOKEN
 
 // HTTP CODES
 #define MAIN_RES_HTTP_CODE_200						200			// "get" (request resource)
@@ -113,9 +110,9 @@ char mqtt_user[64] = "";
 static bool gboolAlwaysMQTTConnected = true;
 
 // locate this string in nvm, so thing token can be rewritten
-static uint8_t gau8TheThingsiOHttpRWUrl[] = THETHINGSIO_EXAMPLE_HTTP_READ_AND_WRITE_URL;
+static uint8_t gau8TheThingsiOHttpRWUrl[] = THETHINGSIO_HTTP_READ_AND_WRITE_URL;
 static uint8_t gau8TheThingsiOActivationData[60] = {0, };
-static uint8_t gau0TheThingsIOHttpSubsURL[] = THETHINGSIO_EXAMPLE_HTTP_SUBSCRIBE;
+static uint8_t gau0TheThingsIOHttpSubsURL[] = THETHINGSIO_HTTP_SUBSCRIBE;
 
 /** Instance of Timer module. */
 struct sw_timer_module swt_module_inst;
@@ -148,24 +145,24 @@ static uint8_t gau8TheThingsIoThingToken[] = "";
 /************************************************************************/
 /* declare inner function                                               */
 /************************************************************************/
-static bool			_thethingsio_example_configure_http_client(thethingsio_http_cb cb);
-static void			_thethingsio_example_configure_timer(void);
+static bool			_thethingsio_configure_http_client(thethingsio_http_cb cb);
+static void			_thethingsio_configure_timer(void);
 
-struct http_entity *_thethingsio_example_http_set_default_entity(void);
-const char*			_thethingsio_example_http_get_contents_type(void *priv_data);
-int					_thethingsio_example_http_get_contents_length(void *priv_data);
-int					_thethingsio_example_http_read(void *priv_data, char *buffer, uint32_t size, uint32_t written);
-void				_thethingsio_example_http_close(void *priv_data);
+struct http_entity *_thethingsio_http_set_default_entity(void);
+const char*			_thethingsio_http_get_contents_type(void *priv_data);
+int					_thethingsio_http_get_contents_length(void *priv_data);
+int					_thethingsio_http_read(void *priv_data, char *buffer, uint32_t size, uint32_t written);
+void				_thethingsio_http_close(void *priv_data);
 
-bool  thethingsio_example_http_init(thethingsio_http_cb cb)
+bool  thethingsio_http_init(thethingsio_http_cb cb)
 {
-	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_init"DEBUG_EOL);
+	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_init"DEBUG_EOL);
 	/* Initialize the Timer. */
-	_thethingsio_example_configure_timer();
+	_thethingsio_configure_timer();
 	/* Initialize the HTTP client service. */
-	if( !_thethingsio_example_configure_http_client(cb) )
+	if( !_thethingsio_configure_http_client(cb) )
 	{
-		DEBUG(DEBUG_CONF_THETHINGSIO"Error : thethingsio_example_init"DEBUG_EOL);
+		DEBUG(DEBUG_CONF_THETHINGSIO"Error : thethingsio_init"DEBUG_EOL);
 		return false;
 	}
 	return true;
@@ -173,7 +170,7 @@ bool  thethingsio_example_http_init(thethingsio_http_cb cb)
 
 
 /* check if thing has been configured already (thing token) */
-uint8_t thethingsio_example_thing_token_available_nvm(void)
+uint8_t thethingsio_thing_token_available_nvm(void)
 {
 	uint8_t token_saved = false;
 	enum status_code status = nvm_read_buffer(NVM_ADDR_THING_TOKEN_SAVED, &token_saved, 1);
@@ -190,7 +187,7 @@ uint8_t thethingsio_example_thing_token_available_nvm(void)
 	return true;
 }
 /* if yes, load thing token from memory */
-uint8_t thethingsio_example_load_thing_token_nvm(void) 
+uint8_t thethingsio_load_thing_token_nvm(void) 
 {
 	/* check for valid thing token in NVM of device */
 	uint8_t readBuffer_Temp[NVMCTRL_PAGE_SIZE] = { 0, };
@@ -205,14 +202,14 @@ uint8_t thethingsio_example_load_thing_token_nvm(void)
 	
 	
 	// update thingsiO read write URL
-	uint8_t thing_token_offset = sizeof(gau8TheThingsiOHttpRWUrl) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH - 1;
+	uint8_t thing_token_offset = sizeof(gau8TheThingsiOHttpRWUrl) - THETHINGSIO_THING_TOKEN_LENGTH - 1;
 	
-	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset), readBuffer_Temp, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);	
+	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset), readBuffer_Temp, THETHINGSIO_THING_TOKEN_LENGTH);	
 	
 	// update thethingIO subscribe URL
 	// add by jb to support subscription
-	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH -1;
-	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), readBuffer_Temp, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_THING_TOKEN_LENGTH -1;
+	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), readBuffer_Temp, THETHINGSIO_THING_TOKEN_LENGTH);
 	printf("subscribe thing token %s", readBuffer_Temp);
 	printf("URL subscription %s"DEBUG_EOL, gau0TheThingsIOHttpSubsURL);
 	// memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset + sizeof(KEEP_ALIVE_VALUE)), KEEP_ALIVE_VALUE, sizeof(KEEP_ALIVE_VALUE));
@@ -225,7 +222,7 @@ uint8_t thethingsio_example_load_thing_token_nvm(void)
 
 
 /* if not, save new thing token to memory and use it */
-uint8_t thethingsio_example_write_thing_token_nvm(char * thing_token)
+uint8_t thethingsio_write_thing_token_nvm(char * thing_token)
 {	
 	uint8_t token_saved = true;
 	uint8_t writeBuffer_Temp[NVMCTRL_PAGE_SIZE] = {0, };
@@ -239,20 +236,20 @@ uint8_t thethingsio_example_write_thing_token_nvm(char * thing_token)
 	if(status == STATUS_OK)
 		status = nvm_write_buffer(NVM_ADDR_THING_TOKEN_SAVED, &token_saved, 1);
 	if(status == STATUS_OK)
-		status = nvm_write_buffer(NVM_ADDR_THING_TOKEN, thing_token, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+		status = nvm_write_buffer(NVM_ADDR_THING_TOKEN, thing_token, THETHINGSIO_THING_TOKEN_LENGTH);
 	
 	// check if all the operations went through correctly
 	if(status != STATUS_OK)
 		printf("set thing token, write thing token error!!\r\n");
 	
 	// update thingsiO read write URL
-	uint8_t thing_token_offset = sizeof(gau8TheThingsiOHttpRWUrl) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH - 1;
-	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset),thing_token, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+	uint8_t thing_token_offset = sizeof(gau8TheThingsiOHttpRWUrl) - THETHINGSIO_THING_TOKEN_LENGTH - 1;
+	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset),thing_token, THETHINGSIO_THING_TOKEN_LENGTH);
 	
 	// update thethingIO subscribe URL
 	// add by jb to support subscription
-	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH -1;
-	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), thing_token, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_THING_TOKEN_LENGTH -1;
+	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), thing_token, THETHINGSIO_THING_TOKEN_LENGTH);
 	
 	
 	return true;
@@ -279,19 +276,19 @@ int  thethingsio_get_thingtoken_state()
 	return gThingTokenConfiguredCorrectlyFlag;
 }
 
-bool thethingsio_activate_thing()
+/* bool thethingsio_activate_thing()
 {
 	char * activation_code = MAIN_THETHINGSIO_ACTIVATION_CODE;
 	bool ret = false;
 	int err_code = 0;
-	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_activiate"DEBUG_EOL);
+	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_activiate"DEBUG_EOL);
 	
-	sprintf(gau8TheThingsiOActivationData,THETHINGSIO_EXAMPLE_JSON_ACTIVATE,activation_code);
+	sprintf(gau8TheThingsiOActivationData,THETHINGSIO_JSON_ACTIVATE,activation_code);
 	
-	struct http_entity * entity = _thethingsio_example_http_set_default_entity();
+	struct http_entity * entity = _thethingsio_http_set_default_entity();
 	entity->priv_data = (void*)gau8TheThingsiOActivationData;
 	
-	err_code = http_client_send_request(&http_client_module_inst, THETHINGSIO_EXAMPLE_HTTP_ACTIVATE_URL,HTTP_METHOD_POST,entity, NULL);
+	err_code = http_client_send_request(&http_client_module_inst, THETHINGSIO_HTTP_ACTIVATE_URL,HTTP_METHOD_POST,entity, NULL);
 	if( err_code == 0)
 	{
 		ret = true;
@@ -304,24 +301,24 @@ bool thethingsio_activate_thing()
 	
 	return ret;
 	
-}
+} */
 
 
 /**
 Send a Activate call to get thethings token from the activation code.
 */
-bool thethingsio_example_activate_thing(char * activation_code)
+bool thethingsio_activate_thing(char * activation_code)
 {
 	bool ret = false;
 	int err_code = 0;
 	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_activiate"DEBUG_EOL);
 	
-	sprintf(gau8TheThingsiOActivationData,THETHINGSIO_EXAMPLE_JSON_ACTIVATE,activation_code);
+	sprintf(gau8TheThingsiOActivationData,THETHINGSIO_JSON_ACTIVATE,activation_code);
 	
-	struct http_entity * entity = _thethingsio_example_http_set_default_entity();
+	struct http_entity * entity = _thethingsio_http_set_default_entity();
 	entity->priv_data = (void*)gau8TheThingsiOActivationData;
 	
-	err_code = http_client_send_request(&http_client_module_inst, THETHINGSIO_EXAMPLE_HTTP_ACTIVATE_URL,HTTP_METHOD_POST,entity, NULL);
+	err_code = http_client_send_request(&http_client_module_inst, THETHINGSIO_HTTP_ACTIVATE_URL,HTTP_METHOD_POST,entity, NULL);
 	if( err_code == 0)
 	{
 		ret = true;	
@@ -335,22 +332,22 @@ bool thethingsio_example_activate_thing(char * activation_code)
 	return ret;
 }
 
-bool  thethingsio_example_subscribe(char *topic)
+bool  thethingsio_subscribe(char *topic)
 {
 	
 	bool ret = false;
 	int err_code = 0;
-	struct http_entity * entity = _thethingsio_example_http_set_default_entity();
-	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_subscribe"DEBUG_EOL);
+	struct http_entity * entity = _thethingsio_http_set_default_entity();
+	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_subscribe"DEBUG_EOL);
 
 }
 
-bool	thethingsio_example_read_and_write(char * write_data)
+bool	thethingsio_write_resource(char * write_data)
 {
 	bool ret = false;
 	int err_code = 0;
 	char ext_header[100] = {0,};
-	struct http_entity * entity = _thethingsio_example_http_set_default_entity();
+	struct http_entity * entity = _thethingsio_http_set_default_entity();
 	
 	DEBUG(DEBUG_CONF_THETHINGSIO"thethingsio_example_read_and_write"DEBUG_EOL);
 	
@@ -367,7 +364,7 @@ bool	thethingsio_example_read_and_write(char * write_data)
 	}
 	else
 	{
-		DEBUG(DEBUG_CONF_THETHINGSIO"Error : thethingsio_example_read_and_write code %d"DEBUG_EOL, err_code);
+		DEBUG(DEBUG_CONF_THETHINGSIO"Error : thethingsio_read_and_write code %d"DEBUG_EOL, err_code);
 	}
 	return ret;
 }
@@ -377,7 +374,7 @@ bool	thethingsio_example_read_and_write(char * write_data)
 /**
  * \brief Configure Timer module.
  */
-static void _thethingsio_example_configure_timer(void)
+static void _thethingsio_configure_timer(void)
 {
 	struct sw_timer_config swt_conf;
 	sw_timer_get_config_defaults(&swt_conf);
@@ -401,7 +398,7 @@ static void _thethingsio_mqtt_configure_timer(void)
 /**
  * \brief Configure HTTP client module.
  */
-static bool _thethingsio_example_configure_http_client(thethingsio_http_cb cb)
+static bool _thethingsio_configure_http_client(thethingsio_http_cb cb)
 {
 	struct http_client_config httpc_conf;
 	int ret;
@@ -426,30 +423,30 @@ static bool _thethingsio_example_configure_http_client(thethingsio_http_cb cb)
 	return true;
 }
 
-struct http_entity * _thethingsio_example_http_set_default_entity()
+struct http_entity * _thethingsio_http_set_default_entity()
 {
 	memset(&g_http_entity, 0x00, sizeof(struct http_entity));
-	g_http_entity.close = _thethingsio_example_http_close;
+	g_http_entity.close = _thethingsio_http_close;
 	g_http_entity.is_chunked = 0;
 	g_http_entity.priv_data = NULL;
-	g_http_entity.read = _thethingsio_example_http_read;
-	g_http_entity.get_contents_length = _thethingsio_example_http_get_contents_length;
-	g_http_entity.get_contents_type = _thethingsio_example_http_get_contents_type;
+	g_http_entity.read = _thethingsio_http_read;
+	g_http_entity.get_contents_length = _thethingsio_http_get_contents_length;
+	g_http_entity.get_contents_type = _thethingsio_http_get_contents_type;
 	
 	return &g_http_entity;
 }
 
-const char* _thethingsio_example_http_get_contents_type(void *priv_data)
+const char* _thethingsio_http_get_contents_type(void *priv_data)
 {
-	return (const char*)THETHINGSIO_EXAMPLE_HTTP_CONTENT_TYPE;
+	return (const char*)THETHINGSIO_HTTP_CONTENT_TYPE;
 }
 
-int _thethingsio_example_http_get_contents_length(void *priv_data)
+int _thethingsio_http_get_contents_length(void *priv_data)
 {
 	return strlen( (char*)priv_data);
 }
 
-int _thethingsio_example_http_read(void *priv_data, char *buffer, uint32_t size, uint32_t written)
+int _thethingsio_http_read(void *priv_data, char *buffer, uint32_t size, uint32_t written)
 {
 	int32_t length = 0;
 	
@@ -585,16 +582,6 @@ static void configure_mqtt(void)
 	printf("end configure mqtt"DEBUG_EOL);
 }
 
-/*bool thethingsio_subscribe_config(void)
-{
-	printf("subscribe config"DEBUG_EOL);
-	// configure a special timer for the mqtt infraestructure
-	_thethingsio_mqtt_configure_timer();
-		
-	configure_mqtt();
-	subscribe_cb = NULL;
-	return true;
-} */
 
 bool thethingsio_subscribe_config(thethingsio_subscribe_cb cb)
 {
@@ -628,7 +615,7 @@ bool thethingsio_disconnect_subscribe()
 	
 }
 
-void _thethingsio_example_http_close(void *priv_data)
+void _thethingsio_http_close(void *priv_data)
 {
 }
 
@@ -675,7 +662,7 @@ void thethingsio_parsing_http_response_data(int response_code, char * response_d
 						printf("test: %s"DEBUG_EOL, thingtoken_obj.value.s);
 						//strcpy(gau8TheThingsIoThingToken, thingtoken_obj.value.s);
 						//pass token to function within thingsio module
-						thethingsio_example_write_thing_token_nvm(thingtoken_obj.value.s);
+						thethingsio_write_thing_token_nvm(thingtoken_obj.value.s);
 						printf("thing token written to nvm successfully \n\r");
 						
 						gThingTokenConfiguredCorrectlyFlag = 0x02;

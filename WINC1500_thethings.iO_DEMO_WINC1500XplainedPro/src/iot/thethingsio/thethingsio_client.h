@@ -80,14 +80,14 @@ typedef void (*thethingsio_http_cb)(struct http_client_module *module_inst, int 
 /*
 *	\brief Initialize thethingsio-demo.
 */
-bool	thethingsio_example_http_init(thethingsio_http_cb cb);
+bool	thethingsio_http_init(thethingsio_http_cb cb);
 
 /* check if thing has been configured already (thing token) */
-uint8_t thethingsio_example_thing_token_available_nvm(void);
+uint8_t thethingsio_thing_token_available_nvm(void);
 /* next step, load thing token from memory */
-uint8_t thethingsio_example_load_thing_token_nvm(); 
+uint8_t thethingsio_load_thing_token_nvm(); 
 /* if not, save new thing token to memory and use it */
-uint8_t thethingsio_example_write_thing_token_nvm(char * thing_token);
+uint8_t thethingsio_write_thing_token_nvm(char * thing_token);
 
 //uint8_t thethingsio_example_subscribe_things_token_nvm(char * thing_token);
 
@@ -98,7 +98,7 @@ uint8_t thethingsio_example_write_thing_token_nvm(char * thing_token);
 *
 *	\return	true send message to server successfully.
 */
-bool	thethingsio_example_activate_thing(char * activation_code);
+bool	thethingsio_activate_thing(char * activation_code);
 
 /*
 *	\brief Send message to thethings.io server.
@@ -106,7 +106,7 @@ bool	thethingsio_example_activate_thing(char * activation_code);
 *
 *	\return	true send message to server. 
 */
-bool	thethingsio_example_read_and_write(char * write_data);
+bool	thethingsio_write_resource(char * write_data);
 
 /*
 *    @typedef \

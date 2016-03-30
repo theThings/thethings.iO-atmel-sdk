@@ -212,10 +212,10 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 			
 			
 			// configure thing token 
-			if( thethingsio_example_thing_token_available_nvm() )
+			if( thethingsio_thing_token_available_nvm() )
 			{
 				thethingsio_set_thingtoken_state(0x02);
-				thethingsio_example_load_thing_token_nvm();
+				thethingsio_load_thing_token_nvm();
 				
 				// MQTT notifications: call thethingsio_connect_subscribe. First we need the thingtoken loaded or recieved.
 				if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
@@ -229,7 +229,7 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 			{
 				// request thing token sending auth code
 				thethingsio_set_thingtoken_state(0x01);
-				thethingsio_activate_thing();
+				thethingsio_activate_thing(MAIN_THETHINGSIO_ACTIVATION_CODE);
 				printf("thing token request sent with activation code\n\r");
 			}
 			
@@ -387,7 +387,7 @@ int main(void)
 
 	
 	/* Initialize TheThings.iO */
-	thethingsio_example_http_init(main_http_client_callback);
+	thethingsio_http_init(main_http_client_callback);
 	
 	/* Initialize the BSP. */
 	nm_bsp_init();
@@ -485,7 +485,7 @@ int main(void)
 			
 			
 			// send temperature value
-			thethingsio_example_read_and_write(send_buf);	
+			thethingsio_write_resource(send_buf);	
 		}
 	}
 

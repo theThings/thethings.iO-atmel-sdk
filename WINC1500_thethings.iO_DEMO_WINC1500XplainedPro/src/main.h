@@ -52,12 +52,10 @@ extern "C" {
 
 #define HEX2ASCII(x) (((x) >= 10) ? (((x) - 10) + 'A') : ((x) + '0'))
 
-
 // This define the user and password for connect to the wifi infraestructure / Changue for your own
 // this is the GUEST thethings io network if you will be in our office you can use it ;)
-#define MAIN_WLAN_DEVICE_NAME			"FastLane Mobile Development"  // """thethings.iO - GUEST"
-#define MAIN_WLAN_PSK					"Wolverine24816"   //"ilovethethingsioguests"
-
+#define MAIN_WLAN_DEVICE_NAME			 "thethings.iO - GUEST"
+#define MAIN_WLAN_PSK					 "ilovethethingsioguests"
 
 
 #define MAIN_WLAN_WEP_KEY_INDEX         1 /**< WEP key index */
@@ -67,6 +65,7 @@ extern "C" {
 #define MAIN_M2M_DEVICE_NAME					"WINC1500_00:01"
 #define MAIN_MAC_ADDRESS						{0xf8, 0xf0, 0x05, 0x45, 0xD4, 0x84}
 
+// DATA Struct for WEP connections
 /*static tstrM2MAPConfig gstrM2MAPConfig = {
 	MAIN_M2M_DEVICE_NAME,
 	1,
@@ -78,13 +77,10 @@ extern "C" {
 	MAIN_M2M_DHCP_SERVER_IP
 }; */
 
-
-
 static CONST char gacHttpProvDomainName[] = MAIN_HTTP_PROV_SERVER_DOMAIN_NAME;
 
 static uint8_t gau8MacAddr[] = MAIN_MAC_ADDRESS;
 static int8_t gacDeviceName[] = MAIN_M2M_DEVICE_NAME;
-
 
 
 #ifdef __cplusplus
