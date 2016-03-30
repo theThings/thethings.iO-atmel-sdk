@@ -210,7 +210,10 @@ http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi
 
 ## Installation
 
-Download from github and open with the Atmel Studio. 
+1. Clone the github repository or Download the zip.
+2. Open the solution with the Atmel Studio 7.0.
+3. Install de EDG driver
+4. Compile and deploy in the board.
 
 
 ## Contributions
