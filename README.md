@@ -172,6 +172,13 @@ static void thethingsio_subscribe_callback(char* message)
 
 ## FAQ
 
+### When compile the source code i recieve the error messsage: "cannot find -IMQTT"
+
+The MQTT implementation is provide by Atmel as a binary library form. 
+
+![Add library](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/addMQTT.jpg)
+
+
 ### How to debug the code?
 
 With atmel studio you can debug using breakpoints and a variable editor.
