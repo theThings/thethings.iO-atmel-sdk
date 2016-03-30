@@ -1,11 +1,11 @@
-## (Thethings.io cloud platorm and Atmel SAMD21XPLAINED PRO - WINC1500 client code)
+## thethings.iO IoT platorm and Atmel SAMD21XPLAINED PRO - WINC1500 client code)
 
 This README is a technical description how to use thethings.iO with the Atmel studio WINC1500 client application.
-Use as code base to create the firmware of a IOT product connected to thethings.IO using the SAMD21 cortex M0 and the WINC1500 Wifi chip.
+Use as code base to create the firmware of a IoT product connected to thethings.IO using the SAMD21 cortex M0 and the WINC1500 WiFi chip.
 
 The project implements the following features:
 
-1. Activation code procedure (the code ask for the thing token using an activation code defined in the source code.)
+1. Activation code procedure (the code ask for the thing-token using an activation code defined in the source code.)
 2. READ a resource (using the HTTP protocol)
 3. WRITE a resource  (using the HTTP protol)
 4. SUBSCRIPTION (using the MQTT broker)
@@ -23,9 +23,9 @@ The project implements the following features:
 This is the picture of the test project:
 ![Test project](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/samd21Xplained_winc1500.jpg)
 
-## Before to Start
+## Before to Start (IMPORTANT)
 
-Upgrade the Atmel  WINC1500 WIFI chipset firmware to the 19.3.0 firmware version. 
+Upgrade the Atmel WINC1500 WiFi chipset firmware to the 19.3.0 firmware version. 
 
 1.Search in example projects by WINC and select WINC_1500 Firmware upgrade Project (SAM21). 
 2.Follow the firmware upgrade Project documentation. Reference at the end of the document.
@@ -36,7 +36,7 @@ http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi
 
 ## About thethings.iO client library
 
-thethings.iO [https://thethings.io] provides a client library to use with the  WINC1500. To download thethings.iO client code from: http://www.github.com/theThings/thethingsio-atmel-sdk
+thethings.iO [https://thethings.io] provides a client library to use with the Atmel WINC1500. To download thethings.iO client code from: http://www.github.com/theThings/thethingsio-atmel-sdk
 
 Download and open with the Atmel Studio 7. 
 
@@ -83,12 +83,12 @@ The example code sends in a interval the temperature register by the temperature
 		}
 ```
 
-In the panel a similar graph is created with the values of the temperature sensor.
+In thethings.iO IoT panel a similar chart is created with the values of the temperature sensor.
 
 ![Temperature the things io panel graph](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/temperature_panel.jpg)
 
 
-### Recieve data in RealTime (with MQTT notifications)
+### Recieve data in real-time (with MQTT notifications)
 
 The panel has an option to send test data to the thing.
 
@@ -99,7 +99,7 @@ set in thethingsio.h
 ``` c
 #define THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE       1
 ```
-TO disable MQTT subscription set 0 to the THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE define.
+To disable MQTT subscription set 0 to the THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE define.
 
 MQTT subscription need to have the always enable energy flag in the chipset.
 
