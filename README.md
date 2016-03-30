@@ -1,17 +1,33 @@
-# thethingsio-atmel-sdk
+## (Thethings.io cloud platorm and Atmel SAMD21XPLAINED PRO - WINC1500 client code)
 
 This README is a technical description how to use thethings.iO with the Atmel studio WINC1500 client application.
+Use as code base to create the firmware of a IOT product connected to thethings.IO using the SAMD21 cortex M0 and the WINC1500 Wifi chip.
+
+The project implements the following features:
+
+1. Activation code procedure (the code ask for the thing token using an activation code defined in the source code.)
+2. READ a resource (using the HTTP protocol)
+3. WRITE a resource  (using the HTTP protol)
+4. SUBSCRIPTION (using the MQTT broker)
 
 ## Requirements
 
 * Atmel SAMD21XPLAINED PRO board
-* Atmel WINC 1500
+* Atmel WINC 1500 module
 * Atmel Studio 7.0
 * Atmel Framework 
 * Windows 7 SP1 (You can use a Windows in a virtual machine but the WINC1500 firmware upgrade ONLY works in a non virtualized Windows machine)
 * thethings.iO free account
+* A protoboard, cable connectors and a led to check the demo app.
 
-## How to Start
+This is the picture of the test project
+![Alt text](/relative/path/to/img.jpg?raw=true "Picture Test")
+
+## Code Example
+
+The source code is a template to start to coding your IOT product.
+
+### How to Start
 
 First task, you should upgrade the Atmel WiFi firmware. 
 
@@ -23,8 +39,7 @@ Check how to start in the atmel oficial document that completes all the procedur
 
 http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi-using-samd21-xplained-pro_userguide.pdf
 
-
-## About thethings.iO client library
+### About thethings.iO client library
 
 thethings.iO [https://thethings.io] provides a client library to use with the  WINC1500. To download thethings.iO client code from: http://www.github.com/theThings/thethingsio-atmel-sdk
 
@@ -34,7 +49,31 @@ Go to File > Open > Project / Solutions. Select the Atmel Studio file on thethin
 
 Go to main.h file and configure the WiFi SSID with the user / password to connect to the WiFi AP.
 
-The activation code is define in DEBUG_THING_TOKEN in main.h file. Use the thing token provide by thething.io platform at https://thethings.iO.
+The activation code is define in ACTION_CODE definition in main.h file. Use the thing token provide by thething.io platform at https://thethings.iO.
+
+
+
+
+## Motivation
+
+
+
+## Installation
+
+Provide code examples and explanations of how to get the project.
+
+## API Reference
+
+Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+
+
+## Contributors
+
+Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+
+## License
+
+A short snippet describing the license (MIT, Apache, etc.)
 
 
 
