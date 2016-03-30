@@ -79,7 +79,7 @@ The example code sends in a interval the temperature register by the temperature
 			
 			
 			// send temperature value
-			thethingsio_example_read_and_write(send_buf);	
+			thethingsio_write_resource(send_buf);	
 		}
 ```
 
