@@ -214,10 +214,6 @@ http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi
 4. Compile and deploy in the board.
 
 
-## Contributions
-
-Based in the Atmel ASF framework, thethings.io client code by Josef and Jordi Buges (Bedomo)
-
 ## License
 
 Copyright [2016] [Thethings.IO]
