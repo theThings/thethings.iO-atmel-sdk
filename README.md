@@ -23,6 +23,28 @@ The project implements the following features:
 This is the picture of the test project:
 ![Test project](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/samd21Xplained_winc1500.jpg)
 
+## Before to Start
+
+Upgrade the Atmel  WINC1500 WIFI chipset firmware to the 19.3.0 firmware version. 
+
+1.Search in example projects by WINC and select WINC_1500 Firmware upgrade Project (SAM21). 
+2.Follow the firmware upgrade Project documentation. Reference at the end of the document.
+
+Check how to start in the atmel oficial document that completes all the procedure to upgrade the wifi host driver interface necesary to allow to comunícate correctly from the chipset to the wifi chipset.
+
+http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi-using-samd21-xplained-pro_userguide.pdf
+
+## About thethings.iO client library
+
+thethings.iO [https://thethings.io] provides a client library to use with the  WINC1500. To download thethings.iO client code from: http://www.github.com/theThings/thethingsio-atmel-sdk
+
+Download and open with the Atmel Studio 7. 
+
+Go to File > Open > Project / Solutions. Select the Atmel Studio file on thethings.iO library folder.
+
+Go to main.h file and configure the WiFi SSID with the user / password to connect to the WiFi AP.
+
+The activation code is define in ACTION_CODE definition in main.h file. Use the thing token provide by thething.io platform at https://thethings.iO.
 
 ## Code Description
 
@@ -147,30 +169,6 @@ static void thethingsio_subscribe_callback(char* message)
 	}
 }
 ```
-
-### Before to Start
-
-First task, you should upgrade the Atmel WiFi firmware. 
-
-Search in example projects by WINC and select WINC_1500 Firmware upgrade Project (SAM21). 
-
-Follow the firmware upgrade Project documentation. Reference at the end of the document.
-
-Check how to start in the atmel oficial document that completes all the procedure to upgrade the wifi host driver interface necesary to allow to comunícate correctly from the chipset to the wifi chipset.
-
-http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi-using-samd21-xplained-pro_userguide.pdf
-
-### About thethings.iO client library
-
-thethings.iO [https://thethings.io] provides a client library to use with the  WINC1500. To download thethings.iO client code from: http://www.github.com/theThings/thethingsio-atmel-sdk
-
-Download and open with the Atmel Studio 7. 
-
-Go to File > Open > Project / Solutions. Select the Atmel Studio file on thethings.iO library folder.
-
-Go to main.h file and configure the WiFi SSID with the user / password to connect to the WiFi AP.
-
-The activation code is define in ACTION_CODE definition in main.h file. Use the thing token provide by thething.io platform at https://thethings.iO.
 
 ## FAQ
 
