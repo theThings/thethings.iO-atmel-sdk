@@ -26,6 +26,8 @@ This is the picture of the test project:
 
 ## Code Description
 
+### Activation Code 
+
 change the Activation code in the thethingsio.h file
 
 ``` c
@@ -37,24 +39,9 @@ change the Activation code in the thethingsio.h file
 #define MAIN_THETHINGSIO_ACTIVATION_CODE			"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" 
 ```
 
-TO disable MQTT subscription set 0 to the THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE define.
 
-MQTT subscription need to have the always enable energy flag in the chipset.
+### Send data to thethings.io platform.
 
-The code to set the energy flag is in the main.c
-
-```c
-
-int main(void)
-{
-  ...
-	/* setting sleep mode. */
-	system_set_sleepmode(SYSTEM_SLEEPMODE_IDLE_0);
-	...
-	m2m_wifi_set_sleep_mode(MAIN_PS_SLEEP_MODE, 1);
-	...
-}
-```
 
 The example code sends in a interval the temperature register by the temperature sensor of the expansion IO board
 
@@ -78,7 +65,90 @@ In the panel a similar graph is created with the values of the temperature senso
 
 ![Temperature the things io panel graph](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/temperature_panel.jpg)
 
-### How to Start
+
+### Recieve data in RealTime (with MQTT notifications)
+
+The panel has an option to send test data to the thing.
+
+![Send data notification](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/sending_data_from_panel.jpg)
+
+set in thethingsio.h
+
+``` c
+#define THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE       1
+```
+TO disable MQTT subscription set 0 to the THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE define.
+
+MQTT subscription need to have the always enable energy flag in the chipset.
+
+The code to set the energy flag is in the main.c
+
+```c
+
+int main(void)
+{
+  ...
+	/* setting sleep mode. */
+	system_set_sleepmode(SYSTEM_SLEEPMODE_IDLE_0);
+	...
+	m2m_wifi_set_sleep_mode(MAIN_PS_SLEEP_MODE, 1);
+	...
+}
+```
+
+
+in the main.c there is a a register method to set the MQTT callback:
+
+``` c
+if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
+{
+	/* Configure the MQTT subscribe broker */
+	thethingsio_subscribe_config(thethingsio_subscribe_callback);
+}
+```
+
+and define the callback method:
+
+```c
+/**
+ * \brief Callback of the MQTT client. ThethingsIO platform send broadcast the messages which the thing recieve.
+ *
+ * \param[in]  message     The jaon message recieve in the MQTT channel from thethings platform.
+ *
+ */
+static void thethingsio_subscribe_callback(char* message)
+{
+	
+   // this callback change the GPIO pin EXT2 en la extension board
+   // check to callback with 
+   // curl -i -H "Accept: application/json"  -H "Content-Type: application/json"  -d '{"values":[{"key": "green","value": "1"}]}' -X POST "http://api.thethings.io/v2/things/{THINGTOKEN}" -k 	
+   printf("%s", message);
+   char strongreen[35];
+   char stroffgreen[35];
+
+   int ret;
+  // port_pin_toggle_output_level(EXT2_PIN_GPIO_0);
+   strcpy(stroffgreen, "[{\"key\":\"green\",\"value\":\"0\"}]\034");
+   strcpy(strongreen, "[{\"key\":\"green\",\"value\":\"1\"}]\034");     
+   ret = strncmp(stroffgreen, message, strnlen(message, 150));
+   if (ret == 0)
+   {
+	    printf("green off \n\r");
+		port_pin_set_output_level(EXT2_PIN_GPIO_0, false);
+		return;
+		
+   }
+   ret = strncmp(strongreen, message, strnlen(message, 150));
+   if (ret == 0)
+   {
+	    printf("green on \n\r");
+		port_pin_set_output_level(EXT2_PIN_GPIO_0, true);
+		return;	
+	}
+}
+```
+
+### Before to Start
 
 First task, you should upgrade the Atmel WiFi firmware. 
 
@@ -104,31 +174,64 @@ The activation code is define in ACTION_CODE definition in main.h file. Use the 
 
 ## FAQ
 
+### How to debug the code?
 
+With atmel studio you can debug using breakpoints and a variable editor.
 
+### How can show the printf messages?
 
+1. Download de realterm software.
+2. Set the 115000 bauds/s and search the correct serial port number.
+3. Connect 
 
+![Realterm use](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/realterm.jpg)
 
-## Motivation
+### The wifi_cb doesn't execute the DHCP finish state.
 
+The wifi_cb in the main.c is the callback method that you recieved from the wifi WINC1500 chipset. 
 
+If wifi firmware is not the 19.3.0 version, you should upgrade the firmware.
+
+To check the version, in the Realterm you should watch the following message:
+
+(APP)(INFO)Chip ID 1503a0
+
+(APP)(INFO)Firmware ver   : 19.3.0
+
+(APP)(INFO)Min driver ver : 19.3.0
+
+(APP)(INFO)Curr driver ver: 19.3.0
+
+(APP)(INFO)POWER SAVE 0
+
+Check how to start in the atmel oficial document that completes all the procedure to upgrade the wifi host driver interface necesary to allow to comunícate correctly from the chipset to the wifi chipset.
+
+http://www.atmel.com/images/atmel-42417-getting-started-guide-for-atwinc1500wifi-using-samd21-xplained-pro_userguide.pdf
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
-
-## API Reference
-
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+Download from github and open with the Atmel Studio. 
 
 
-## Contributors
+## Contributions
 
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+Based in the Atmel ASF framework, thethings.io client code by Josef and Jordi Buges (Bedomo)
 
 ## License
 
-A short snippet describing the license (MIT, Apache, etc.)
+Copyright [2016] [Thethings.IO]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 
 
