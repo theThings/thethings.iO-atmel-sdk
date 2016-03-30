@@ -24,7 +24,7 @@ This is the picture of the test project:
 ![Test project](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/samd21Xplained_winc1500.jpg)
 
 
-## Code Modification
+## Code Description
 
 change the Activation code in the thethingsio.h file
 
