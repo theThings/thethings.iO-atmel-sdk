@@ -20,13 +20,59 @@ The project implements the following features:
 * thethings.iO free account
 * A protoboard, cable connectors and a led to check the demo app.
 
-This is the picture of the test project
+This is the picture of the test project:
 ![Test project](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/samd21Xplained_winc1500.jpg)
 
 
-## Code Example
+## Code Modification
 
-The source code is a template to start to coding your IOT product.
+change the Activation code in the thethingsio.h file
+
+``` c
+#define THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE       1
+
+// this activation code once requests a thing token. This thing token will then be stored in non volatile memory
+// IMPORTANT !!!!!! you should modify the following line with your own activation code.
+// Change the XXXXXX for your REAL activation code
+#define MAIN_THETHINGSIO_ACTIVATION_CODE			"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" 
+```
+
+TO disable MQTT subscription set 0 to the THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE define.
+
+MQTT subscription need to have the always enable energy flag in the chipset.
+
+The code to set the energy flag is in the main.c
+
+```c
+
+int main(void)
+{
+  ...
+	/* setting sleep mode. */
+	system_set_sleepmode(SYSTEM_SLEEPMODE_IDLE_0);
+	...
+	m2m_wifi_set_sleep_mode(MAIN_PS_SLEEP_MODE, 1);
+	...
+}
+```
+
+The example code sends in a interval the temperature register by the temperature sensor of the expansion IO board
+
+```c
+/* do things if thing token has been configured correctly */
+		if( tick_counter_check_timer() && thethingsio_get_thingtoken_state() == 0x02 )
+		{	
+			char send_buf[100] = {0,};
+			int dTemp = 0;
+				
+			dTemp = (int) at30tse_read_temperature();		
+			sprintf(send_buf,MAIN_THETHINGSIO_JSON_START MAIN_THETHINGSIO_JSON_KEY_VALUE_SI MAIN_THETHINGSIO_JSON_END, "temperature", (int)dTemp);
+			
+			
+			// send temperature value
+			thethingsio_example_read_and_write(send_buf);	
+		}
+```
 
 ### How to Start
 
@@ -51,6 +97,10 @@ Go to File > Open > Project / Solutions. Select the Atmel Studio file on thethin
 Go to main.h file and configure the WiFi SSID with the user / password to connect to the WiFi AP.
 
 The activation code is define in ACTION_CODE definition in main.h file. Use the thing token provide by thething.io platform at https://thethings.iO.
+
+## FAQ
+
+
 
 
 
