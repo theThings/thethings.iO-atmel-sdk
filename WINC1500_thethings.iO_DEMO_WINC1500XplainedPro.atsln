@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "WINC1500_thethings.iO_DEMO_WINC1500XplainedPro", "WINC1500_thethings.iO_DEMO_WINC1500XplainedPro\WINC1500_thethings.iO_DEMO_WINC1500XplainedPro.cproj", "{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "WINC1500_LOCATE_IP_ADDRESS_EXAMPLE1", "WINC1500_LOCATE_IP_ADDRESS_EXAMPLE1\WINC1500_LOCATE_IP_ADDRESS_EXAMPLE1.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -15,6 +17,10 @@ Global
 		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Debug|ARM.Build.0 = Debug|ARM
 		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Release|ARM.ActiveCfg = Release|ARM
 		{76F7A0D0-40D9-4993-A725-CBE6F6E81F70}.Release|ARM.Build.0 = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.ActiveCfg = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|ARM.Build.0 = Debug|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.ActiveCfg = Release|ARM
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

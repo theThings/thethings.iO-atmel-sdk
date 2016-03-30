@@ -46,13 +46,6 @@ extern "C" {
 #endif
 
 
-
-
-
-
-
-
-
 // power mode
 // The M2M_NO_PS mode don't switch off the WIFI 
 #define MAIN_PS_SLEEP_MODE  M2M_NO_PS
@@ -62,8 +55,8 @@ extern "C" {
 
 // This define the user and password for connect to the wifi infraestructure / Changue for your own
 // this is the GUEST thethings io network if you will be in our office you can use it ;)
-#define MAIN_WLAN_DEVICE_NAME			"thethings.iO - GUEST"
-#define MAIN_WLAN_PSK					"ilovethethingsioguests"
+#define MAIN_WLAN_DEVICE_NAME			"FastLane Mobile Development"  // """thethings.iO - GUEST"
+#define MAIN_WLAN_PSK					"Wolverine24816"   //"ilovethethingsioguests"
 
 
 

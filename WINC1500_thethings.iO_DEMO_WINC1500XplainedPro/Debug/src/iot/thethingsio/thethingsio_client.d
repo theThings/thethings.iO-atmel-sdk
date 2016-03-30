@@ -178,7 +178,8 @@ src/iot/thethingsio/thethingsio_client.d \
  ../src/ASF/sam0/drivers/tcc/tcc.h ../src/iot/http/http_entity.h \
  ../src/iot/mqtt/mqtt.h ../src/tick_counter.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\ctype.h \
- ../src/ASF/common/components/wifi/winc1500/driver/include/m2m_types.h
+ ../src/ASF/common/components/wifi/winc1500/driver/include/m2m_types.h \
+ ../src/iot/json.h
 
 ../src/debug_conf.h:
 
@@ -555,3 +556,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\ctype.h:
 
 ../src/ASF/common/components/wifi/winc1500/driver/include/m2m_types.h:
+
+../src/iot/json.h:

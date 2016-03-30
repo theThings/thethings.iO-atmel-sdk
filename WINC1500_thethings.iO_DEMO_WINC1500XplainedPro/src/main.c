@@ -210,20 +210,19 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 			DEBUG(DEBUG_CONF_WIFI "GET IP :is %u.%u.%u.%u" DEBUG_EOL, pu8IPAddress[0],pu8IPAddress[1],pu8IPAddress[2],pu8IPAddress[3]);
 			ap_wifi_connection_state = MAIN_AP_CONNECTION;
 			
-			thethingsio_connect_subscribe();
-		
-#ifdef DEBUG_USE_THING_TOKEN_INSTEAD_OF_ACTIVATION_CODE
-			thethingsio_example_write_thing_token_nvm(DEBUG_THING_TOKEN);
-			thethingsio_example_load_thing_token_nvm();
-			printf("debug thing token wrote to nvm and loaded from it successfully \n\r");
-			thethingsio_set_thingtoken_state(0x02);						
-			gThingTokenConfiguredCorrectlyFlag = 0x02;
-#else
+			
 			// configure thing token 
 			if( thethingsio_example_thing_token_available_nvm() )
 			{
 				thethingsio_set_thingtoken_state(0x02);
 				thethingsio_example_load_thing_token_nvm();
+				
+				// MQTT notifications: call thethingsio_connect_subscribe. First we need the thingtoken loaded or recieved.
+				if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
+				{
+					thethingsio_connect_subscribe();
+				}
+				
 				printf("thing token loaded from nvm successfully \n\r");
 			}
 			else
@@ -234,10 +233,6 @@ static void wifi_cb(uint8_t u8MsgType, void* pvMsg)
 				printf("thing token request sent with activation code\n\r");
 			}
 			
-			
-			
-			
-#endif
 			break;
 		}
 		case M2M_WIFI_RESP_DEFAULT_CONNECT:
@@ -383,8 +378,13 @@ int main(void)
 	/* Configure Non-Volatile Memory */
 	configure_nvm();
 	
-	/* Configure the MQTT subscribe broker */
-	thethingsio_subscribe_config(thethingsio_subscribe_callback);
+	if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
+	{
+		/* Configure the MQTT subscribe broker */
+		thethingsio_subscribe_config(thethingsio_subscribe_callback);
+	}
+	
+
 	
 	/* Initialize TheThings.iO */
 	thethingsio_example_http_init(main_http_client_callback);
@@ -418,7 +418,11 @@ int main(void)
 	
 	// We have 2 Callbacks one for the MQTT subsystem and another for the HTTP request.
 	//registerSocketCallback(socket_cb, resolve_cb);
-	registerSocketCallbackMQTT(mqtt_socket_event_handler, mqtt_socket_resolve_handler);
+	if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
+	{
+		registerSocketCallbackMQTT(mqtt_socket_event_handler, mqtt_socket_resolve_handler);
+	}
+	
 	registerSocketCallback(http_client_socket_event_handler, http_client_socket_resolve_handler);
 	
 	// WIFI Connection

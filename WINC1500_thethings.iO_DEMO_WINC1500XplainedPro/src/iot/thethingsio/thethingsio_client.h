@@ -49,12 +49,22 @@
 extern "C" {
 #endif
 
+
+// #define DEBUG_THING_TOKEN							"XJgU-PTj5k9VRvl_5I3O8mIkFNSYBpk7JMWRpQrNwQE"
+#define THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE       1
+
+// this activation code once requests a thing token. This thing token will then be stored in non volatile memory
+// IMPORTANT !!!!!! you should modify the following line with your own activation code.
+//#define MAIN_THETHINGSIO_ACTIVATION_CODE			"uPyFIj1aaVMPW5PmrtXoBZ7Oiz9XJYJ_9A"  // 
+#define MAIN_THETHINGSIO_ACTIVATION_CODE			"AYko3JsNbtEQoHTePzuaRJp0T0TcjGT5ZQ"  // 
+
+
 // format to send values to thethings.io
 #define MAIN_THETHINGSIO_JSON_START					"{\"values\":[{"
 #define MAIN_THETHINGSIO_JSON_KEY_VALUE_SS			"\"key\":\"%s\",\"value\":\"%s\""
 #define MAIN_THETHINGSIO_JSON_KEY_VALUE_SI			"\"key\":\"%s\",\"value\":\"%d\""
-	//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SS	"\"%s\":\"%s\""						// minimum amount of characters for string-key and  string-value, returns error from thethings!!
-	//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SI	"\"%s\":%d"							// minimum amount of characters for string-key and integer-value, returns error from thethings!!
+//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SS	"\"%s\":\"%s\""						// minimum amount of characters for string-key and  string-value, returns error from thethings!!
+//#define MAIN_THETHINGSIO_JSON_KEY_VALUE_SMALL_SI	"\"%s\":%d"							// minimum amount of characters for string-key and integer-value, returns error from thethings!!
 #define MAIN_THETHINGSIO_JSON_SEPARATOR				","
 #define MAIN_THETHINGSIO_JSON_END					"}]}"
 

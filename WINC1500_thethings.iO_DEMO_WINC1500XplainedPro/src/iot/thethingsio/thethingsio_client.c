@@ -41,6 +41,7 @@
 #include "debug_conf.h"
 #include "thethingsio_client.h"
 #include "tick_counter.h"
+#include "json.h"
 
 
 // use this only during development, to avoid that new thing token is requested all the time
@@ -48,17 +49,17 @@
 ///** This define the user and password for connect to the wifi infraestructure
 
 
-#define DEBUG_THING_TOKEN							"PUT YOUR THING TOKEN"
-
-// this activation code once requests a thing token. This thing token will then be stored in non volatile memory
-// IMPORTANT !!!!!! you should modify the following line with your own activation code.
-#define MAIN_THETHINGSIO_ACTIVATION_CODE			"PUT YOUR ACTIVATION CODE"
 
 #define THETHINGSIO_EXAMPLE_ACTIVATION_CODE_LENGTH		34
 #define THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH			43
 
 // format to activate thing
 #define THETHINGSIO_EXAMPLE_JSON_ACTIVATE			"{\"activationCode\":\"%s\"}"
+#define THETHINGSIO_CALLBACK_THINGTOKEN			    "thingToken"	
+#define THETHINGSIO_CALLBACK_STATUS					"status"	
+#define THETHINGSIO_CALLBACK_ERROR_MSJ				"message"
+#define THETHINGSIO_CALLBACK_ERROR					"code"
+
 	
 #define THETHINGSIO_EXAMPLE_DUMMY_ACTIVATION_CODE	"0000000000000000000000000000000000"
 #define THETHINGSIO_EXAMPLE_DUMMY_THING_TOKEN		"0000000000000000000000000000000000000000000"
@@ -73,6 +74,7 @@
 #define MAIN_RES_HTTP_CODE_200						200			// "get" (request resource)
 #define MAIN_RES_HTTP_CODE_201						201			// activate thing, "post" (create resource)
 #define MAIN_RES_HTTP_CODE_400						400			// bad request
+#define MAIN_RES_HTTP_CODE_403						403			// error
 #define MAIN_RES_HTTP_CODE_500						500			// internal error
 
 
@@ -141,7 +143,7 @@ static char mqtt_buffer[MAIN_MQTT_BUFFER_SIZE];
 
 static thethingsio_subscribe_cb  subscribe_cb;
 
-static uint8_t gau8TheThingsIoThingToken[] = DEBUG_THING_TOKEN;
+static uint8_t gau8TheThingsIoThingToken[] = "";
 
 /************************************************************************/
 /* declare inner function                                               */
@@ -207,7 +209,7 @@ uint8_t thethingsio_example_load_thing_token_nvm(void)
 	
 	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset), readBuffer_Temp, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);	
 	
-	// update thingIO subscribe URL
+	// update thethingIO subscribe URL
 	// add by jb to support subscription
 	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH -1;
 	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), readBuffer_Temp, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
@@ -246,6 +248,12 @@ uint8_t thethingsio_example_write_thing_token_nvm(char * thing_token)
 	// update thingsiO read write URL
 	uint8_t thing_token_offset = sizeof(gau8TheThingsiOHttpRWUrl) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH - 1;
 	memcpy((gau8TheThingsiOHttpRWUrl+thing_token_offset),thing_token, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+	
+	// update thethingIO subscribe URL
+	// add by jb to support subscription
+	uint8_t things_token_subscribe_offset = sizeof(gau0TheThingsIOHttpSubsURL) - THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH -1;
+	memcpy((gau0TheThingsIOHttpSubsURL+things_token_subscribe_offset), thing_token, THETHINGSIO_EXAMPLE_THING_TOKEN_LENGTH);
+	
 	
 	return true;
 }
@@ -651,22 +659,39 @@ void thethingsio_parsing_http_response_data(int response_code, char * response_d
 		case MAIN_RES_HTTP_CODE_201:			// commands with 201 response code: activate thing, "post" (create resource)
 		{
 			if( response_length > 0)
-			{
-				// later version: read server response and decide what to do based on response
-				
-				/* check if this answer comes due to device activation by analyzing the response, then flag can be kicked here */
-				if (gThingTokenConfiguredCorrectlyFlag == 0x01) 
+			{	
+				// activation json response: {"status":"created","message":"thing activated","thingToken":"XXXXXXXXXXXXXXXXXXX"}			
+				printf("HTTP response: %s"DEBUG_EOL, response_data);
+				struct json_obj response_obj, thingtoken_obj, status_obj;
+				json_create(&response_obj, buf, response_length);
+				if (json_find(&response_obj, THETHINGSIO_CALLBACK_THINGTOKEN, &thingtoken_obj) == 0)
 				{
-					// if so, extract token and use it
-					// insert JSON read here
-					strcpy(gau8TheThingsIoThingToken, DEBUG_THING_TOKEN);
+					// subscription code
+					/* check if this answer comes due to device activation by analyzing the response, then flag can be kicked here */
+					if (gThingTokenConfiguredCorrectlyFlag == 0x01)
+					{
+						// if so, extract token and use it
+						// insert JSON read here
+						printf("test: %s"DEBUG_EOL, thingtoken_obj.value.s);
+						//strcpy(gau8TheThingsIoThingToken, thingtoken_obj.value.s);
+						//pass token to function within thingsio module
+						thethingsio_example_write_thing_token_nvm(thingtoken_obj.value.s);
+						printf("thing token written to nvm successfully \n\r");
+						
+						gThingTokenConfiguredCorrectlyFlag = 0x02;
+						
+						if (THETHINGSIO_MQTT_SUBSCRIPTION_ACTIVATE)
+						{
+							thethingsio_connect_subscribe();
+						}
+					}
 					
-					//pass token to function within thingsio module
-					thethingsio_example_write_thing_token_nvm(gau8TheThingsIoThingToken);
-					printf("thing token written to nvm successfully \n\r");
-					
-					gThingTokenConfiguredCorrectlyFlag = 0x02;
+				} else if (json_find(&response_obj, THETHINGSIO_CALLBACK_STATUS, &status_obj) == 0)
+				{
+					// Add your code
+					// do something with the resource created method created
 				}
+				
 			}
 		}		
 		
@@ -674,7 +699,26 @@ void thethingsio_parsing_http_response_data(int response_code, char * response_d
 		break;
 		case MAIN_RES_HTTP_CODE_400:
 		{
-
+			
+		}
+		break;
+		case MAIN_RES_HTTP_CODE_403:
+		{
+			if( response_length > 0)
+			{	
+			
+				struct json_obj response_obj, thingtoken_obj, error_obj, error_msj_obj;
+				json_create(&response_obj, buf, response_length);
+				if (json_find(&response_obj, THETHINGSIO_CALLBACK_ERROR, &error_obj) == 0)
+				{
+					if (json_find(&response_obj, THETHINGSIO_CALLBACK_ERROR, &error_msj_obj) == 0)
+					{
+						
+						printf("Error message: %s"DEBUG_EOL, error_msj_obj.value.s);
+						
+					}
+				}
+			}
 		}
 		break;
 		case MAIN_RES_HTTP_CODE_500:
