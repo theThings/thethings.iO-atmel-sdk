@@ -176,7 +176,11 @@ static void thethingsio_subscribe_callback(char* message)
 
 The MQTT implementation is provide by Atmel as a binary library form. 
 
-![Add library](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/addMQTT.jpg)
+![Add library dialog](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/addlibrary.jpg)
+
+Search the MQTT
+
+![Add library search](https://raw.githubusercontent.com/theThings/thethings.iO-atmel-sdk/master/docs/atmel_pictures/addMQTT.jpg)
 
 
 ### How to debug the code?
